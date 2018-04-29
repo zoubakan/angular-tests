@@ -1,10 +1,11 @@
 import { Post } from '../shared/post';
 import { Subject } from 'rxjs/Subject';
+import { NewPostComponent } from '../new-post/new-post.component';
 
 export class PostsService {
 
     postsSubject = new Subject<Post[]>();
-    posts = [
+    private posts = [
         {
           title: 'Le PSG et le désert économique français',
           // tslint:disable-next-line:max-line-length
@@ -30,18 +31,35 @@ export class PostsService {
         this.postsSubject.next(this.posts.slice());
     }
 
-    addNewPost() {
-      return new Promise(
-        (resolve, reject) => {
-          setTimeout(
-            () => {
-              resolve(true);
-            }, 2000
-          );
-        }
-      );
+    likeIt(post: Post) {
+        this.posts[this.getPostIndex(post)].loveIts ++;
+        this.emitPostSubject();
     }
 
-    deletePost() {
+    unlikeIt(post: Post) {
+        this.posts[this.getPostIndex(post)].loveIts --;
+        this.emitPostSubject();
+    }
+
+    addNewPost(title: string, content: string) {
+        const newPost = new Post(title, content, 0, new Date());
+        this.posts.push(newPost);
+        this.emitPostSubject();
+    }
+
+    deletePost(post: Post) {
+        this.posts.splice(this.getPostIndex(post), 1);
+        this.emitPostSubject();
+    }
+
+    getPostIndex(post: Post): number {
+        const postIndexToRemove = this.posts.findIndex(
+            (postEl) => {
+              if (postEl === post) {
+                return true;
+              }
+            }
+        );
+        return postIndexToRemove;
     }
 }
