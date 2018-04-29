@@ -8,7 +8,7 @@ import { Post } from '../shared/post';
 export class PostListItemComponent implements OnInit {
 
   @Input() postItem: Post;
-  
+
   constructor() { }
 
   ngOnInit() {
