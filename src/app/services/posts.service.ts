@@ -1,7 +1,10 @@
 import { Post } from '../shared/post';
 import { Subject } from 'rxjs/Subject';
 import { NewPostComponent } from '../new-post/new-post.component';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
+@Injectable()
 export class PostsService {
 
     postsSubject = new Subject<Post[]>();
@@ -27,6 +30,8 @@ export class PostsService {
         }
     ];
 
+    constructor(private httpClient: HttpClient) { }
+
     emitPostSubject() {
         this.postsSubject.next(this.posts.slice());
     }
@@ -34,22 +39,26 @@ export class PostsService {
     likeIt(post: Post) {
         this.posts[this.getPostIndex(post)].loveIts ++;
         this.emitPostSubject();
+        this.savePostsToServer();
     }
 
     unlikeIt(post: Post) {
         this.posts[this.getPostIndex(post)].loveIts --;
         this.emitPostSubject();
+        this.savePostsToServer();
     }
 
     addNewPost(title: string, content: string) {
         const newPost = new Post(title, content, 0, new Date());
         this.posts.push(newPost);
         this.emitPostSubject();
+        this.savePostsToServer();
     }
 
     deletePost(post: Post) {
         this.posts.splice(this.getPostIndex(post), 1);
         this.emitPostSubject();
+        this.savePostsToServer();
     }
 
     getPostIndex(post: Post): number {
@@ -61,5 +70,34 @@ export class PostsService {
             }
         );
         return postIndexToRemove;
+    }
+
+    savePostsToServer() {
+        this.httpClient
+            .put('https://my-blog-test-3db3d.firebaseio.com/posts.json', this.posts)
+            .subscribe(
+            () => {
+                console.log('Enregistrement terminé !');
+            },
+            (error) => {
+                console.log('Erreur ! : ' + error);
+            }
+        );
+    }
+
+    getPostsFromServer() {
+        this.httpClient
+          .get<Post[]>('https://my-blog-test-3db3d.firebaseio.com/posts.json')
+          .subscribe(
+            (response) => {
+                if (response !== null) {
+                    this.posts = response;
+                    this.emitPostSubject();
+                }
+            },
+            (error) => {
+                console.log('Erreur ! : ' + error);
+            }
+        );
     }
 }
