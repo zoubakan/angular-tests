@@ -39,26 +39,26 @@ export class PostsService {
     likeIt(post: Post) {
         this.posts[this.getPostIndex(post)].loveIts ++;
         this.emitPostSubject();
-        this.savePostsToServer();
+        /*this.savePostsToServer();*/
     }
 
     unlikeIt(post: Post) {
         this.posts[this.getPostIndex(post)].loveIts --;
         this.emitPostSubject();
-        this.savePostsToServer();
+        /*this.savePostsToServer();*/
     }
 
     addNewPost(title: string, content: string) {
         const newPost = new Post(title, content, 0, new Date());
         this.posts.push(newPost);
         this.emitPostSubject();
-        this.savePostsToServer();
+        /*this.savePostsToServer();*/
     }
 
     deletePost(post: Post) {
         this.posts.splice(this.getPostIndex(post), 1);
         this.emitPostSubject();
-        this.savePostsToServer();
+        /*this.savePostsToServer();*/
     }
 
     getPostIndex(post: Post): number {

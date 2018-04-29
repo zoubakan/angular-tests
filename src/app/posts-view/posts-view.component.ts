@@ -17,7 +17,7 @@ export class PostsViewComponent implements OnInit, OnDestroy {
   constructor(private postsService: PostsService ) { }
 
   ngOnInit() {
-    //this.postsService.getPostsFromServer();
+    /*this.postsService.getPostsFromServer();*/
     this.postSubscription = this.postsService.postsSubject.subscribe(
       (posts: Post[]) => {
         this.posts = posts;
